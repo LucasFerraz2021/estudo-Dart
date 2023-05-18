@@ -1,0 +1,72 @@
+import 'dart:math';
+
+void main() {
+  Triangle c1 = Triangle(10.0);
+  print(c1.edge);
+  print(c1.area());
+  print(c1.perimetro());
+}
+
+class Pointer {
+  var x;
+  var y;
+
+  Pointer([this.x = 0, this.y = 0]);
+}
+
+class Shape extends Pointer {
+  var name;
+  var coord;
+
+  Shape([this.name = 'shape', this.coord = 0]);
+}
+
+class Circle extends Shape {
+  var radius;
+
+  Circle([this.radius]);
+  
+  double area(){
+   return 3.14 * (radius * radius);
+  }
+}
+
+class Triangle extends Shape {
+  var edge;
+  
+  Triangle([this.edge]);
+  
+  double area(){
+    return (edge * edge) / 2;
+  }
+  
+  double perimetro(){
+  return edge + (edge / 2) + pow(pow(edge, 2) + pow(edge/2, 2), 2);
+  }
+}
+
+class Rect extends Shape {
+  var height;
+  var width;
+  
+  Rect([this.height = 0, this.width = 0]);
+  
+  double area(){
+    return height * width; 
+  }
+  
+  double perimetro(){
+  return (width * height) * 2;
+  }
+}
+
+class Square extends Rect {
+  var height;
+  var width;
+  
+  
+  Square([var edge]) {
+    this.height = edge;
+    this.width = edge;
+  }
+}
