@@ -1,11 +1,10 @@
 void main(){
-  AccountCurrent p1 = AccountCurrent();
-  AccountCurrent p2 = AccountCurrent();
-  p1.AbrirConta('Joao vitor');
+  //AccountCurrent p1 = AccountCurrent();
+  //p1.AbrirConta('Joao vitor');
+  AccountSpecial p2 = AccountSpecial();
   p2.AbrirConta('Ivina');
-  p1.Depositar(100);
-  p1.Transferir(p2, 50);
-  p1.Sacar(100);
+  p2.Depositar(100);
+  p2.Sacar(1000);
   print(Account.contas);
 }
 
@@ -28,21 +27,18 @@ abstract class Account {
       'saldo': 0,
       'tipo': tipo,
     };
+    if (contas[nome]['tipo'] == 'special'){
+      contas[nome].putIfAbsent('limite', () => 1000);
+    }
   }
   
-  void FecharConta(){
-    contas.remove(nome);
-  }
+  void FecharConta() => contas.remove(nome);
   
-  void Depositar(int valor){
-    contas[nome]['saldo'] += valor;
-  }
+  void Depositar(int valor) => contas[nome]['saldo'] += valor;
   
   void Sacar(int valor);
   
-  void Pagar(int valor){
-    contas[nome]['saldo'] -= valor;
-  }
+  void Pagar(int valor);
   
   void Transferir(Account pessoa, int valor){
     contas[nome]['saldo'] -= valor;
@@ -67,4 +63,44 @@ class AccountCurrent extends Account {
       print('Saldo insuficiente para completar a operação!!');
     }
   }
+  
+  @override
+  void Pagar(int valor){
+    Account.contas[nome]['saldo'] -= valor;
+  }
 }
+
+class AccountSpecial extends Account {
+  
+  AccountSpecial([tipo = '']) : super(tipo: 'special');
+  
+  void Pagar_Sacar(int valor) {
+    int saldo = Account.contas[nome]['saldo'];
+    int limite = Account.contas[nome]['limite'];
+    
+    if (saldo >= valor) {
+      Account.contas[nome]['saldo'] -= valor;
+    } else if((saldo + limite) > valor ) {
+      Account.contas[nome]['saldo'] = 0;
+      Account.contas[nome]['limite'] = (limite + saldo) - valor;
+    } else if(valor > (saldo + limite)){
+      print('Saldo insuficiente para completar a operação!!');
+    }
+  }
+  
+  @override
+  void Sacar(int valor){
+    
+    Pagar_Sacar(valor);
+  }
+  
+  @override
+  void Pagar(int valor){
+    Pagar_Sacar(valor);
+  }
+  
+}
+
+
+
+
