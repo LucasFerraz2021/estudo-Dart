@@ -36,9 +36,23 @@ abstract class Account {
   
   void Depositar(int valor) => contas[nome]['saldo'] += valor;
   
-  void Sacar(int valor);
+  void Pagar_Sacar(int valor){
+    int saldo = Account.contas[nome]['saldo'];
+    
+    if (saldo >= valor) {
+      Account.contas[nome]['saldo'] -= valor;
+    } else {
+      print('Saldo insuficiente para completar a operação!!');
+    }
+  }
   
-  void Pagar(int valor);
+  void Sacar(int valor){
+    Pagar_Sacar(valor);
+  }
+  
+  void Pagar(int valor){
+    Pagar_Sacar(valor);
+  }
   
   void Transferir(Account pessoa, int valor){
     contas[nome]['saldo'] -= valor;
@@ -52,22 +66,6 @@ abstract class Account {
 
 class AccountCurrent extends Account {
   AccountCurrent([tipo = '']) : super(tipo: 'Corrente');
-  
-  @override
-  void Sacar(int valor){
-    int saldo = Account.contas[nome]['saldo'];
-    
-    if (saldo >= valor) {
-      Account.contas[nome]['saldo'] -= valor;
-    } else {
-      print('Saldo insuficiente para completar a operação!!');
-    }
-  }
-  
-  @override
-  void Pagar(int valor){
-    Account.contas[nome]['saldo'] -= valor;
-  }
 }
 
 class AccountSpecial extends Account {
