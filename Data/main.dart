@@ -51,3 +51,15 @@ class JSONData extends Data {
   }
   
 }
+
+class XMLData extends Data {
+}
+
+abstract class DelimitedData extends Data {
+}
+
+class CSVData extends DelimitedData {
+}
+
+class TSVData extends DelimitedData {
+}
