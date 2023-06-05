@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:xml/xml.dart';
+import 'package:csv/csv.dart';
+import 'dart:io';
 
 //import 'dart:io';
 
@@ -129,8 +131,145 @@ class XMLData extends Data {
 }
 
 
+abstract class DelimitedData extends Data{
+  String get delimiter;
+}
 
+class CSVData extends DelimitedData {
   
+  void load(String fileName) {
+    
+    List<List<dynamic>> csvList = CsvToListConverter().convert(fileName, shouldParseNumbers: false);
+
+    List<String> headers = csvList[0].map((e) => e.toString()).toList();
+
+    List<Map<String, dynamic>> records = csvList.sublist(1).map((row) {
+      Map<String, dynamic> record = {};
+      for (int i = 0; i < row.length; i++) {
+        record[headers[i]] = row[i];
+      }
+      return record;
+    }).toList();
+    
+    _data = records;
+  }
   
+  @override
+  void save(String fileName){
+    print('por enquanto, nada');
+  }
   
+  String get data {
+    List<List<dynamic>> csvData = [];
+
+    // Adicionar cabeçalhos
+    csvData.add(_data[0].keys.toList());
+
+    // Adicionar valores
+    _data.forEach((map) {
+      csvData.add(map.values.toList());
+    });
+
+    String csvString = ListToCsvConverter().convert(csvData);
+    return csvString;
+  }
   
+  @override
+  set data(String data) {
+    List<List<dynamic>> csvList = CsvToListConverter().convert(data, shouldParseNumbers: false);
+
+    List<String> headers = csvList[0].map((e) => e.toString()).toList();
+
+    List<Map<String, dynamic>> records = csvList.sublist(1).map((row) {
+      Map<String, dynamic> record = {};
+      for (int i = 0; i < row.length; i++) {
+        record[headers[i]] = row[i];
+      }
+      return record;
+    }).toList();
+    
+    _data = records;
+  }
+  
+  @override
+  List<String> get fields {
+    return ['Por nquanto nada'];
+  }
+  
+  @override
+  String get delimiter => ',';
+  
+}
+
+class TSVData extends DelimitedData {
+  
+  void load(String fileName) {
+    String tsvFilePath = 'caminho/para/o/arquivo.tsv';
+
+    List<Map<String, dynamic>> dataList = [];
+
+    final file = File(fileName);
+    final lines = file.readAsLinesSync();
+
+    List<String> headers = lines[0].split('\t');
+
+    for (int i = 1; i < lines.length; i++) {
+      List<String> values = lines[i].split('\t');
+      Map<String, dynamic> map = {};
+
+      for (int j = 0; j < headers.length; j++) {
+        map[headers[j]] = values[j];
+      }
+
+      dataList.add(map);
+    }
+    
+    _data = dataList;
+  }
+  
+  @override
+  void save(String fileName){
+    print('por enquanto, nada');
+  }
+  
+  String get data {
+    List<List<dynamic>> tsvData = [];
+
+    // Adicionar cabeçalhos
+    tsvData.add(_data[0].keys.toList());
+
+    // Adicionar valores
+    _data.forEach((map) {
+      tsvData.add(map.values.toList());
+    });
+
+    String tsvString = const ListToCsvConverter(fieldDelimiter: '\t').convert(tsvData);
+    return tsvString;
+  }
+  
+  @override
+  set data(String data) {
+    List<List<dynamic>> csvList = CsvToListConverter().convert(data, shouldParseNumbers: false);
+
+    List<String> headers = csvList[0].map((e) => e.toString()).toList();
+
+    List<Map<String, dynamic>> records = csvList.sublist(1).map((row) {
+      Map<String, dynamic> record = {};
+      for (int i = 0; i < row.length; i++) {
+        record[headers[i]] = row[i];
+      }
+      return record;
+    }).toList();
+    
+    _data = records;
+  }
+  
+  @override
+  List<String> get fields {
+    return ['Por nquanto nada'];
+  }
+  
+  @override
+  String get delimiter => '\t';
+  
+}
