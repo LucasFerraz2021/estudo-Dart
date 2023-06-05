@@ -35,8 +35,11 @@ class JSONData extends Data {
   
   @override
   void load(String fileName){
-    String jsonString = json.encode(fileName);
-    List<dynamic> dataList = jsonDecode(jsonString);
+    //String jsonString = json.encode(fileName);
+    //List<dynamic> dataList = jsonDecode(jsonString);
+    
+    List<Map<String, dynamic>> dataList = json.decode(fileName).cast<Map<String, dynamic>>();
+    
     _data = dataList;
   }
   
@@ -251,6 +254,13 @@ class TSVData extends DelimitedData {
   
   @override
   String get delimiter => '\t';
-
+  
 }
+
+
+
+
+  
+  
+  
   
