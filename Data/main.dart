@@ -1,65 +1,136 @@
 import 'dart:convert';
-//json: '{"nome": "João", "idade": 25, "email": "joao@example.com"}'
+import 'package:xml/xml.dart';
+
+//import 'dart:io';
 
 void main(){
-  
-  var fileName = '{"nome": "João", "idade": 25, "email": "joao@example.com"}';
-  
-  var d1 = JSONData();
-  d1.load(fileName);
-  d1.save(fileName);
-  //d1.clear();
-  print(d1.memoria);
-  print(d1.hasData());
-  
+  String fileName = '';
+  print('hello world!!');
 }
 
-abstract class Data {
-  List memoria = [];
-  String copyFileName = '';
+abstract class Data{
+  List _data = [];
   
-  void load(String fileName){
-    memoria.add(fileName);
-  }
+  void load(String fileName);
   
-  void save(String fileName){
-    fileName = '$memoria';
-  }
+  void save(String fileName);
   
   void clear(){
-    memoria = [];
+    _data.clear();
   }
   
-  bool hasData(){
-    return memoria.length > 0;
-  }
+  bool get hasData => data.isNotEmpty;
   
-  List get data => memoria;
+  String get data;
+  
+  set data(String data);
+  
+  List<String> get fields;
+  
 }
 
 class JSONData extends Data {
   
   @override
   void load(String fileName){
-    this.memoria.add(jsonDecode(fileName));
+    String jsonString = json.encode(fileName);
+    List<dynamic> dataList = jsonDecode(jsonString);
+    _data = dataList;
   }
   
   @override
   void save(String fileName){
-    fileName = jsonEncode(this.memoria);
-    //fileName = '${this.memoria}';
+    print('por enquanto, nada');
+  }
+  
+  @override
+  String get data {
+    return json.encode(_data);
+  }
+  
+  @override
+  set data(String data){
+    String jsonString = json.encode(data);
+    List<dynamic> dataList = jsonDecode(jsonString);
+    _data = dataList;
+  }
+  
+  @override
+  List<String> get fields {
+    return ['Por nquanto nada'];
   }
   
 }
 
 class XMLData extends Data {
+  
+  @override
+  void load(String fileName){
+    XmlDocument xmlDoc = XmlDocument.parse(fileName);
+    List<Map<String, String>> records = [];
+
+    for (var recordNode in xmlDoc.findAllElements('record')) {
+      Map<String, String> record = {};
+      record['id'] = recordNode.getAttribute('id');
+      record['name'] = recordNode.getAttribute('name');
+      record['email'] = recordNode.getAttribute('email');
+      record['phone'] = recordNode.getAttribute('phone');
+      records.add(record);
+    }
+    _data = records; 
+  }
+  
+  @override
+  void save(String fileName){
+    print('por enquanto, nada');
+  }
+  
+  @override
+  String get data {
+    var builder = XmlBuilder();
+    builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+    builder.element('data', nest: () {
+      for (var record in _data) {
+        builder.element('record', nest: () {
+          record.forEach((key, value) {
+            builder.attribute(key, value);
+          });
+        });
+      }
+    });
+
+    var xmlDoc = builder.build();
+    var xmlString = xmlDoc.toXmlString(pretty: true);
+    
+    return xmlString;
+  }
+  
+  @override
+  set data(String data){
+    XmlDocument xmlDoc = XmlDocument.parse(data);
+    List<Map<String, String>> records = [];
+
+    for (var recordNode in xmlDoc.findAllElements('record')) {
+      Map<String, String> record = {};
+      record['id'] = recordNode.getAttribute('id');
+      record['name'] = recordNode.getAttribute('name');
+      record['email'] = recordNode.getAttribute('email');
+      record['phone'] = recordNode.getAttribute('phone');
+      records.add(record);
+    }
+    _data = records; 
+  }
+  
+  @override
+  List<String> get fields {
+    return ['Por nquanto nada'];
+  }
+  
 }
 
-abstract class DelimitedData extends Data {
-}
 
-class CSVData extends DelimitedData {
-}
 
-class TSVData extends DelimitedData {
-}
+  
+  
+  
+  
