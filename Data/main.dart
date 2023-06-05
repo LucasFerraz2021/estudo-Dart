@@ -27,7 +27,7 @@ abstract class Data{
   
   set data(String data);
   
-  List<String> get fields;
+  List<String> get fields => _data[0].keys.toList();
   
 }
 
@@ -55,11 +55,6 @@ class JSONData extends Data {
     String jsonString = json.encode(data);
     List<dynamic> dataList = jsonDecode(jsonString);
     _data = dataList;
-  }
-  
-  @override
-  List<String> get fields {
-    return ['Por nquanto nada'];
   }
   
 }
@@ -121,11 +116,6 @@ class XMLData extends Data {
       records.add(record);
     }
     _data = records; 
-  }
-  
-  @override
-  List<String> get fields {
-    return ['Por nquanto nada'];
   }
   
 }
@@ -192,11 +182,6 @@ class CSVData extends DelimitedData {
   }
   
   @override
-  List<String> get fields {
-    return ['Por nquanto nada'];
-  }
-  
-  @override
   String get delimiter => ',';
   
 }
@@ -204,7 +189,7 @@ class CSVData extends DelimitedData {
 class TSVData extends DelimitedData {
   
   void load(String fileName) {
-    String tsvFilePath = 'caminho/para/o/arquivo.tsv';
+    //String tsvFilePath = fileName;
 
     List<Map<String, dynamic>> dataList = [];
 
@@ -265,11 +250,7 @@ class TSVData extends DelimitedData {
   }
   
   @override
-  List<String> get fields {
-    return ['Por nquanto nada'];
-  }
-  
-  @override
   String get delimiter => '\t';
-  
+
 }
+  
